@@ -1,13 +1,15 @@
-package com.example.blecomunication
+package com.example.uthus
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.example.blecomunication.adapter.MainViewPagerAdapter
-import com.example.blecomunication.databinding.ActivityMainBinding
+import com.example.uthus.databinding.ActivityMainBinding
+import com.example.uthus.adapter.MainViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import mva2.adapter.MultiViewAdapter
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var dataBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
 
 
-       val  mainViewPagerAdapter = MainViewPagerAdapter(this)
+        val  mainViewPagerAdapter = MainViewPagerAdapter(this)
         dataBinding.viewpagerMain.adapter = mainViewPagerAdapter
         dataBinding.viewpagerMain.isUserInputEnabled = false
 

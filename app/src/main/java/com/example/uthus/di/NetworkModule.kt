@@ -1,6 +1,7 @@
-package com.example.blecomunication.di
+package com.example.uthus.di
 
-import com.example.blecomunication.BuildConfig
+import com.example.uthus.BuildConfig
+import com.example.uthus.repository.BaseRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -18,9 +19,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+
+    @Singleton
+    @Provides
+    fun provideBaseRepository() = BaseRepository()
+
     @Provides
     @Singleton
-    fun provideRefreshHTTPClient(): OkHttpClient {
+    fun provideHTTPClient(): OkHttpClient {
         val okHttpClientBuilder = OkHttpClient.Builder()
             .callTimeout(RETROFIT_CALL_TIME_OUT, TimeUnit.SECONDS)
             .readTimeout(RETROFIT_CALL_READ_OUT, TimeUnit.SECONDS)
@@ -31,7 +37,6 @@ class NetworkModule {
             chain.proceed(
                 chain.request().newBuilder()
                     .addHeader("Accept", "application/json")
-
                     .build()
             )
         }
@@ -40,7 +45,7 @@ class NetworkModule {
     }
     @Singleton
     @Provides
-    fun provideUnAuthenRetrofit( client: OkHttpClient): Retrofit {
+    fun provideRetrofit( client: OkHttpClient): Retrofit {
         val gson: Gson = GsonBuilder()
             .setLenient()
             .create()

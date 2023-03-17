@@ -1,4 +1,4 @@
-package com.example.blecomunication.model
+package com.example.uthus.model
 
 import com.google.gson.annotations.SerializedName
 

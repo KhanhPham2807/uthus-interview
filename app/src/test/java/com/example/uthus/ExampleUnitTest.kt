@@ -1,4 +1,4 @@
-package com.example.blecomunication
+package com.example.uthus
 
 import org.junit.Test
 

@@ -1,11 +1,9 @@
-package com.example.blecomunication.adapter
+package com.example.uthus.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import com.example.blecomunication.R
-import com.example.blecomunication.databinding.ItemBeerBinding
-import com.example.blecomunication.model.Beer
+import com.example.uthus.databinding.ItemBeerBinding
+import com.example.uthus.model.Beer
 import mva2.adapter.ItemBinder
 import mva2.adapter.ItemViewHolder
 
