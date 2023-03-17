@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Text16Bold" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/long_16sp</item>
+        <item name="android:includeFontPadding">false</item>
+
+    </style>
+
+</resources>

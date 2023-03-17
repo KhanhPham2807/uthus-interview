@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BLEComunication</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="beer">Beer</string>
+    <string name="favorite">favorite</string>
+    <string name="note">Note</string>
+    <string name="save">SAVE</string>
+</resources>
