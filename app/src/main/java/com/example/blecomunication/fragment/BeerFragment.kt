@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.example.blecomunication.R
 import com.example.blecomunication.adapter.ItemBeerBinder
@@ -45,6 +46,8 @@ class BeerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = MultiViewAdapter()
+        dataBinding.recyclerBeer.layoutManager =  LinearLayoutManager(context)
+
         dataBinding.recyclerBeer.setAdapter(adapter)
 
         // Register Binder
@@ -65,6 +68,7 @@ class BeerFragment : Fragment() {
 
         // Add Section to the adapter
         adapter.addSection(listSection)
+        adapter.notifyDataSetChanged()
     }
 
     companion object {
