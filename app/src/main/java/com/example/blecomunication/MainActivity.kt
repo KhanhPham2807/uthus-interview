@@ -32,6 +32,6 @@ class MainActivity : AppCompatActivity() {
                 1 -> tab.text = this.getString(R.string.favorite)
             }
         }.attach()
-        val adapter = MultiViewAdapter ()
+
     }
 }

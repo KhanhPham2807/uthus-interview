@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="#DF1212"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragment.BeerFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="#E4F6D9"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/beer" />
+        tools:context=".fragment.BeerFragment">
 
-</FrameLayout>
+        <!-- TODO: Update blank fragment layout -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerBeer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/beer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
