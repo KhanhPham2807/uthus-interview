@@ -8,19 +8,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import com.example.uthus.R
 import com.example.uthus.adapter.ItemBeerBinder
+import com.example.uthus.common.extention.FragmentExt.collectFlowWhenStarted
 import com.example.uthus.databinding.FragmentBeerBinding
 import com.example.uthus.model.Beer
 import com.example.uthus.viewmodel.BeerViewModel
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import mva2.adapter.ListSection
-
 import mva2.adapter.MultiViewAdapter
-
-
 
 
 /**
@@ -32,6 +28,9 @@ import mva2.adapter.MultiViewAdapter
 class BeerFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private lateinit var dataBinding:  FragmentBeerBinding
+    val adapter by lazy {
+        MultiViewAdapter()
+    }
     private val beerViewModel : BeerViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,30 +48,40 @@ class BeerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = MultiViewAdapter()
-        dataBinding.recyclerBeer.layoutManager =  LinearLayoutManager(context)
+        initView()
+        fetchData()
+        collectDataFromViewModel()
+    }
 
-        dataBinding.recyclerBeer.setAdapter(adapter)
+    private fun collectDataFromViewModel() {
+        with(beerViewModel){
+            collectFlowWhenStarted(beerResponseChannel){
+                addListBeerToView(it)
+            }
+        }
+    }
 
-        // Register Binder
-
-        // Register Binder
-        adapter.registerItemBinders(ItemBeerBinder())
-
+    private fun addListBeerToView(listBeer: List<Beer>) {
         // Create Section and add items
-
         // Create Section and add items
         val listSection: ListSection<Beer> = ListSection<Beer>()
-        listSection.addAll(listOf<Beer>(
-            Beer(name = "Saigon", price = "2000"),
-            Beer(name = "Haniken", price = "40000")
-        ))
+        listSection.addAll(listBeer)
 
         // Add Section to the adapter
 
         // Add Section to the adapter
         adapter.addSection(listSection)
-        beerViewModel.getBeer()
+    }
+
+    private fun fetchData() {
+        beerViewModel.getListBeers()
+    }
+
+    private fun initView() {
+
+        dataBinding.recyclerBeer.layoutManager =  LinearLayoutManager(context)
+        dataBinding.recyclerBeer.setAdapter(adapter)
+        adapter.registerItemBinders(ItemBeerBinder())
     }
 
     companion object {

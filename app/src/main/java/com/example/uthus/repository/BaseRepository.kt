@@ -46,7 +46,7 @@ open class BaseRepository @Inject constructor() {
                 true
             }
             .catch { e ->
-
+                Log.d("Henry", e.toString())
                 if (e is HttpException) {
                     emit(NetworkResult.Error(handleHTTPErrorResponse(e)))
                 } else {

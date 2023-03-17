@@ -8,5 +8,5 @@ data class Beer(
     @SerializedName("rating"        ) var rating      : Rating? = Rating(),
     @SerializedName("image"         ) var image       : String? = null,
     @SerializedName("id"            ) var id          : Int?    = null,
-    @SerializedName("sale_off_time" ) var saleOffTime : Int?    = null
+//    @SerializedName("sale_off_time" ) var saleOffTime : Int?    = null
 )
