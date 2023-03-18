@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="item"
+            type="com.example.uthus.model.BeerResponse"/>
+
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tool="http://schemas.android.com/tools">
         <ImageView
+
+            android:img_url="@{item.image}"
             android:id="@+id/imgBeer"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintStart_toStartOf="parent"
@@ -13,6 +21,9 @@
             android:layout_width="60dp"
             android:layout_height="60dp"/>
         <TextView
+            android:paddingEnd="@dimen/long_16dp"
+            app:layout_constraintEnd_toStartOf="@id/btnSave"
+            android:text="@{item.name}"
             android:layout_marginStart="10dp"
             android:textSize="@dimen/long_16sp"
             android:textColor="@color/black"
@@ -20,9 +31,10 @@
             android:id="@+id/tvBeerName"
             app:layout_constraintTop_toTopOf="@id/imgBeer"
             app:layout_constraintStart_toEndOf="@id/imgBeer"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <TextView
+            android:text="@{item.price}"
             android:id="@+id/tvPrice"
             android:textColor="@color/black"
             android:layout_marginTop="5dp"
@@ -34,12 +46,14 @@
             android:layout_height="wrap_content"/>
 
         <Button
+            android:id="@+id/btnSave"
             android:text="@string/save"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
+            android:id="@+id/editNote"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imgBeer"

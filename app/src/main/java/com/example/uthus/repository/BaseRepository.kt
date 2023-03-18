@@ -2,9 +2,10 @@ package com.example.uthus.repository
 
 import android.content.Context
 import android.util.Log
+import com.example.uthus.common.Constant.DEFAULT_RETRY_API_REQUEST_TIMES
 
 import com.example.uthus.common.CoroutineDispatcherProvider
-import com.example.uthus.common.NetworkHelper
+import com.example.uthus.common.helper.NetworkHelper
 import com.example.uthus.model.api.BaseErrorApiResponse
 import com.example.uthus.model.api.BaseListApiResponse
 import com.example.uthus.network.NetworkResult
@@ -12,8 +13,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.*
-import org.json.JSONArray
-import org.json.JSONObject
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -30,11 +29,15 @@ open class BaseRepository @Inject constructor() {
     lateinit var context: Context
 
     suspend fun <T> safeApiCallWithLoadingDialog(
+        shouldShowLoadingDialog : Boolean,
         call: suspend () -> Deferred<BaseListApiResponse<T>>,
     ): Flow<NetworkResult<T>> {
         return flow {
             if (NetworkHelper.isNetworkAvailable(context)) {
-                emit(NetworkResult.LoadingDialog())
+                if(shouldShowLoadingDialog){
+                    emit(NetworkResult.LoadingDialog())
+
+                }
                 val result = call.invoke().await()
                 emit(NetworkResult.Success(result))
             } else {
@@ -42,7 +45,7 @@ open class BaseRepository @Inject constructor() {
             }
 
         }.flowOn(dispatcher.io)
-            .retry(2L) {
+            .retry(DEFAULT_RETRY_API_REQUEST_TIMES) {
                 true
             }
             .catch { e ->

@@ -1,4 +1,4 @@
-package com.example.uthus.common
+package com.example.uthus.common.helper
 
 import android.content.Context
 import android.net.ConnectivityManager

@@ -16,5 +16,5 @@ class BaseListApiResponse <T> {
     var data:  List<T>? = null
 
     @SerializedName("loadMore")
-    var loadMore: Boolean? = null
+    var allowLoadMore: Boolean = false
 }
