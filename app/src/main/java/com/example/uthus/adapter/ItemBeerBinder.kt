@@ -50,6 +50,7 @@ class ItemBeerBinder(val onBtnSaveClick: (BeerResponse,String, Int) -> Unit) :
                     binding?.btnSave?.text = "SAVING"
                     binding?.btnSave?.isEnabled = false
 
+
                 }
                 SAVED ->{
                     binding?.btnSave?.visibility = View.GONE

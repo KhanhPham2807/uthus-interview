@@ -3,7 +3,7 @@
     <data>
         <variable
             name="item"
-            type="com.example.uthus.model.BeerResponse"/>
+            type="com.example.uthus.model.BeerLocal"/>
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,7 +13,7 @@
         xmlns:tool="http://schemas.android.com/tools">
         <ImageView
 
-            android:img_url="@{item.image}"
+            android:img_path="@{item.image}"
             android:id="@+id/imgBeer"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,7 @@
             android:layout_height="60dp"/>
         <TextView
             android:paddingEnd="@dimen/long_16dp"
-            app:layout_constraintEnd_toStartOf="@id/btnSave"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
             android:text="@{item.name}"
             android:layout_marginStart="10dp"
             android:textSize="@dimen/long_16sp"
@@ -44,10 +44,17 @@
             app:layout_constraintStart_toStartOf="@id/tvBeerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
         <Button
-            android:id="@+id/btnSave"
-            android:text="@string/save"
+            android:layout_marginRight="15dp"
+            android:id="@+id/btnDelete"
+            android:text="@string/delete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btnEdit"
+            android:text="@string/update"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"

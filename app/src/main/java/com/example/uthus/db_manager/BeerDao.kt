@@ -21,4 +21,7 @@ interface BeerDao {
     @Query("DELETE FROM $TABLE_NAME")
     fun deleteAllData()
 
+    @Query("SELECT EXISTS(SELECT 1 FROM  $TABLE_NAME WHERE `id` = :id)")
+    fun exists(id: Int): Boolean
+
 }

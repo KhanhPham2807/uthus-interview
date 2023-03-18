@@ -36,7 +36,6 @@ open class BaseRepository @Inject constructor() {
             if (NetworkHelper.isNetworkAvailable(context)) {
                 if(shouldShowLoadingDialog){
                     emit(NetworkResult.LoadingDialog())
-
                 }
                 val result = call.invoke().await()
                 emit(NetworkResult.Success(result))
@@ -58,7 +57,7 @@ open class BaseRepository @Inject constructor() {
             }
     }
 
-    private fun handleHTTPErrorResponse(exception: HttpException): BaseErrorApiResponse {
+     fun handleHTTPErrorResponse(exception: HttpException): BaseErrorApiResponse {
         return try {
             var errorResponse = BaseErrorApiResponse()
             exception.response()?.errorBody()?.let { it ->

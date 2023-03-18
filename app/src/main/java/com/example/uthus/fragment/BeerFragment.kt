@@ -120,7 +120,7 @@ class BeerFragment : Fragment() {
         dataBinding.recyclerBeer.layoutManager = LinearLayoutManager(context)
         dataBinding.recyclerBeer.setAdapter(adapter)
         adapter.registerItemBinders(ItemBeerBinder(onBtnSaveClick = {beerResponse, note,itemPosition ->
-            beerViewModel.saveBeerToFavorite(beerResponse,note,itemPosition)
+            beerViewModel.saveBeerToFavorite(requireContext(),beerResponse,note,itemPosition)
         }))
         dataBinding.recyclerBeer.onReachBottom {
             beerViewModel.loadMoreBeer()

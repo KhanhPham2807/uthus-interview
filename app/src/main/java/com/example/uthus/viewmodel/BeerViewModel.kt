@@ -23,10 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BeerViewModel @Inject constructor(
-    val beerRepository: BeerRepository,
-    val uthusDBController: UthusDBController,
-    @ApplicationContext val context: Context,
-    val dispatcher: CoroutineDispatcherProvider
+    private val beerRepository: BeerRepository,
+    private val uthusDBController: UthusDBController,
+    private val dispatcher: CoroutineDispatcherProvider
 ) : ViewModel() {
     private val dataListWrapper = DataListWrapper<BeerResponse>()
 
@@ -44,7 +43,7 @@ class BeerViewModel @Inject constructor(
     private fun getListBeers(shouldShowLoading: Boolean) {
         viewModelScope.launch {
 
-            beerRepository.getListBeer(dataListWrapper.currentPage, shouldShowLoading)
+            beerRepository.getListBeerCheckExist(dataListWrapper.currentPage, shouldShowLoading)
                 .collect { networkResult ->
                     when (networkResult) {
                         is NetworkResult.LoadingDialog -> {
@@ -58,10 +57,7 @@ class BeerViewModel @Inject constructor(
                                     dataListWrapper.allowLoadMore = it.allowLoadMore
                                 }
                             }
-
                             _beerResponseFlow.emit(FetchBeerState.Success(dataListWrapper.dataList))
-
-
                         }
                         is NetworkResult.Error -> {
                             _beerResponseFlow.emit(FetchBeerState.Error(networkResult?.baseErrorApiResponse?.message))
@@ -88,15 +84,14 @@ class BeerViewModel @Inject constructor(
         }
     }
 
-    fun saveBeerToFavorite(beerResponse: BeerResponse, note: String, beerPosition :Int) {
+    fun saveBeerToFavorite(context :Context,beerResponse: BeerResponse, note: String, beerPosition :Int) {
         viewModelScope.launch(dispatcher.io) {
-         val selectedBeer =   dataListWrapper.dataList.find {
+            val selectedBeer =   dataListWrapper.dataList.find {
                 it.id  ==  beerResponse.id
             }
             selectedBeer?.saveStatus = SAVING
+            selectedBeer?.note = note
             _saveBeerFlow.emit(SaveBeerState.Loading(beerPosition))
-
-            delay(3000L)
             val imageFilePatch = FileHelper.downloadFileFromURL(context, beerResponse.image)
             uthusDBController.beerDao.insertBeer(
                 BeerLocal.mapData(
@@ -124,7 +119,6 @@ class BeerViewModel @Inject constructor(
     sealed class SaveBeerState {
         class Loading(val beerPosition: Int) : SaveBeerState()
         class Success(val beerPosition: Int) : SaveBeerState()
-
         class Error(val errorMessage: String?) : SaveBeerState()
     }
 

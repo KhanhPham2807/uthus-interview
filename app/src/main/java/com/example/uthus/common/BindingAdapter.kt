@@ -14,3 +14,13 @@ fun ImageView.setImageByUrl(url: String) {
         .placeholder(R.drawable.img_place_holder)
         .into(this);
 }
+
+@BindingAdapter("android:img_path")
+fun ImageView.setImageByPath(path: String) {
+
+    Glide
+        .with(this)
+        .load(path)
+        .placeholder(R.drawable.img_place_holder)
+        .into(this);
+}

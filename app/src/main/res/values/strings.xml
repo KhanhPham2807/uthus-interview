@@ -6,4 +6,6 @@
     <string name="favorite">favorite</string>
     <string name="note">Note</string>
     <string name="save">SAVE</string>
+    <string name="delete">Delete</string>
+    <string name="update">Update</string>
 </resources>
