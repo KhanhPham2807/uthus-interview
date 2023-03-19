@@ -62,9 +62,10 @@ class BeerViewModel @Inject constructor(
                                 if (it.data != null) {
                                     dataListWrapper.dataList.addAll(it.data!!)
                                     dataListWrapper.allowLoadMore = it.allowLoadMore
+                                    _beerResponseFlow.emit(FetchBeerState.Success(it.data!!, isLoadMore))
                                 }
                             }
-                            _beerResponseFlow.emit(FetchBeerState.Success(dataListWrapper.dataList, isLoadMore))
+
                         }
                         is NetworkResult.Error -> {
                             _beerResponseFlow.emit(FetchBeerState.Error(networkResult?.baseErrorApiResponse?.message))
@@ -89,10 +90,13 @@ class BeerViewModel @Inject constructor(
     }
 
     fun loadMoreBeer() {
-        if (dataListWrapper.allowLoadMore) {
-            dataListWrapper.currentPage++
-            getListBeers(false, true)
+        viewModelScope.launch {
+            if (dataListWrapper.allowLoadMore) {
+                dataListWrapper.currentPage++
+                getListBeers(false, true)
+            }
         }
+
     }
 
     fun saveBeerToFavorite(context :Context,beerResponse: BeerResponse, note: String, beerPosition :Int) {

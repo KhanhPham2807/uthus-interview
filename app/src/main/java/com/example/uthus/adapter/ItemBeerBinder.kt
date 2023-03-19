@@ -1,20 +1,25 @@
 package com.example.uthus.adapter
 
-import android.icu.text.SimpleDateFormat
 import android.os.CountDownTimer
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.uthus.common.extention.setSafeOnClickListener
+import com.example.uthus.common.millisToDHMS
 import com.example.uthus.databinding.ItemBeerBinding
 import com.example.uthus.model.BeerResponse
 import com.example.uthus.model.BeerResponse.Companion.SaveStatus.SAVED
 import com.example.uthus.model.BeerResponse.Companion.SaveStatus.SAVING
 import com.example.uthus.model.BeerResponse.Companion.SaveStatus.UNSAVED
+import kotlinx.coroutines.*
 import mva2.adapter.ItemBinder
 import mva2.adapter.ItemViewHolder
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class ItemBeerBinder(val onBtnSaveClick: (BeerResponse,String, Int) -> Unit) :
     ItemBinder<BeerResponse, ItemBeerBinder.BeerViewHolder?>() {
@@ -22,10 +27,20 @@ class ItemBeerBinder(val onBtnSaveClick: (BeerResponse,String, Int) -> Unit) :
     override fun bindViewHolder(viewHolder: BeerViewHolder?, beerResponse: BeerResponse?) {
 
         beerResponse?.let {
-            viewHolder?.bindView(it,onBtnSaveClick,countDownMap)
+            viewHolder?.bindView(it, onBtnSaveClick)
+
         }
 
+
+
+
+
     }
+
+    private fun updateCountdownTimer(viewHolder: BeerViewHolder?, targetTime: Long?) {
+
+    }
+
 
     override fun createViewHolder(parent: ViewGroup?): BeerViewHolder {
 
@@ -40,10 +55,10 @@ class ItemBeerBinder(val onBtnSaveClick: (BeerResponse,String, Int) -> Unit) :
     class BeerViewHolder constructor(val binding: ItemBeerBinding?) :
         ItemViewHolder<BeerResponse>(binding?.root) {
 
+        private var job: Job? = null
         fun bindView(
             beerResponseItem: BeerResponse,
             onBtnSaveClick: (BeerResponse, String, Int) -> Unit,
-            countDownMap: HashMap<Int, CountDownTimer>
         ) {
 
             binding?.item = beerResponseItem
@@ -75,27 +90,39 @@ class ItemBeerBinder(val onBtnSaveClick: (BeerResponse,String, Int) -> Unit) :
                     binding?.editNote?.isEnabled  = true
                 }
             }
-            val currentTime = System.currentTimeMillis()
-            val diff = item.saleOffTime?.minus(currentTime)
+            recycle()
+            var remainingTime = beerResponseItem.saleOffTime?.minus(System.currentTimeMillis())
+            if(remainingTime!! >0){
+                job = CoroutineScope(Dispatchers.Main).launch {
+                    if (remainingTime != null) {
+                        while (isActive && remainingTime!! > 0) {
+                            // Update your countdown timer view element here
 
-            if (countDownMap.containsKey(item.id)) {
-                countDownMap[item.id]?.cancel()
-            }
-            val countDownTimer = object : CountDownTimer(diff!!, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
+                            // Delay for 1 second before updating again
+                            delay(1000)
 
-                    binding?.tvSaleOffTime?.text = "Sale of in ${millisToDHMS(millisUntilFinished)} "
+                            // Recalculate the remaining time in milliseconds
+                            val currentTime = System.currentTimeMillis()
+                            remainingTime = item.saleOffTime?.minus(currentTime)
+
+                            updateSaleOfTime(millisToDHMS(remainingTime!!))
+
+
+                        }
+                    }
                 }
-
-                override fun onFinish() {
-                    // Do something when the countdown is finished
-                    binding?.tvSaleOffTime?.text = "Sale Off"
-                }
+            }
+            else{
+                updateSaleOfTime("Saled off")
             }
 
-            countDownMap[item.id] = countDownTimer
-            countDownTimer.start()
 
+
+        }
+
+        private fun recycle() {
+            // Cancel the coroutine job if it is still active
+            job?.cancel()
         }
         fun millisToDHMS(duration: Long): String {
             val days = TimeUnit.MILLISECONDS.toDays(duration)
@@ -105,6 +132,10 @@ class ItemBeerBinder(val onBtnSaveClick: (BeerResponse,String, Int) -> Unit) :
             val months = days / 30
             val remainingDays = days % 30
             return " $hours:$minutes:$seconds  $remainingDays-$months,"
+        }
+
+        fun updateSaleOfTime(s: String) {
+            binding?.tvSaleOffTime?.text = s
         }
     }
 

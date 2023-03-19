@@ -15,11 +15,11 @@ import com.example.uthus.common.extention.FragmentExt.collectFlowWhenStarted
 import com.example.uthus.common.extention.onReachBottom
 import com.example.uthus.databinding.FragmentBeerBinding
 import com.example.uthus.model.BeerResponse
-import com.example.uthus.model.BeerResponse.Companion.SaveStatus.SAVING
 import com.example.uthus.viewmodel.BeerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import mva2.adapter.ListSection
 import mva2.adapter.MultiViewAdapter
+import mva2.adapter.util.InfiniteLoadingHelper
 
 
 /**
@@ -34,7 +34,7 @@ class BeerFragment : Fragment() {
     val adapter by lazy {
         MultiViewAdapter()
     }
-   private var listSection: ListSection<BeerResponse> =  ListSection<BeerResponse>()
+    private var listSection: ListSection<BeerResponse> = ListSection<BeerResponse>()
     private val beerViewModel: BeerViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +74,7 @@ class BeerFragment : Fragment() {
                     is BeerViewModel.FetchBeerState.Success -> {
                         dataBinding.refreshLayout.isRefreshing = false
                         dataBinding.progressCircular.visibility = View.GONE
-                        addListBeerToView(getBeerState.listBeerResponse,getBeerState.isLoadMore)
+                        addListBeerToView(getBeerState.listBeerResponse, getBeerState.isLoadMore)
                     }
                     is BeerViewModel.FetchBeerState.Error -> {
                         dataBinding.refreshLayout.isRefreshing = false
@@ -99,7 +99,7 @@ class BeerFragment : Fragment() {
                     is BeerViewModel.SaveBeerState.Success -> {
                         adapter.notifyItemChanged(saveBeerState.beerPosition)
                     }
-                    else->{
+                    else -> {
 
                     }
 
@@ -107,11 +107,11 @@ class BeerFragment : Fragment() {
                 }
 
             }
-            collectFlowWhenStarted(uiEvent){event ->
-                when(event){
-                    is BeerViewModel.UIEvent.ClearSection ->{
+            collectFlowWhenStarted(uiEvent) { event ->
+                when (event) {
+                    is BeerViewModel.UIEvent.ClearSection -> {
                         adapter.removeAllSections()
-                        listSection= ListSection<BeerResponse>()
+                        listSection = ListSection<BeerResponse>()
 
                     }
                 }
@@ -119,34 +119,33 @@ class BeerFragment : Fragment() {
         }
     }
 
-    private fun addListBeerToView(listBeerResponse: List<BeerResponse>, isLoadMore : Boolean) {
-        if(!isLoadMore){
-            listSection= ListSection<BeerResponse>()
+    private fun addListBeerToView(listBeerResponse: List<BeerResponse>, isLoadMore: Boolean) {
+        if (!isLoadMore) {
             listSection.addAll(listBeerResponse)
             adapter.addSection(listSection)
-        }
-        else{
+        } else {
             listSection.addAll(listBeerResponse)
-            adapter.notifyDataSetChanged()
+
         }
+
 
     }
 
     private fun fetchData() {
-
         beerViewModel.startGetListBeer(true)
     }
 
     private fun initView() {
-
         dataBinding.recyclerBeer.layoutManager = LinearLayoutManager(context)
         dataBinding.recyclerBeer.setAdapter(adapter)
-        adapter.registerItemBinders(ItemBeerBinder(onBtnSaveClick = {beerResponse, note,itemPosition ->
-            beerViewModel.saveBeerToFavorite(requireContext(),beerResponse,note,itemPosition)
+        adapter.registerItemBinders(ItemBeerBinder(onBtnSaveClick = { beerResponse, note, itemPosition ->
+            beerViewModel.saveBeerToFavorite(requireContext(), beerResponse, note, itemPosition)
         }))
         dataBinding.recyclerBeer.onReachBottom {
             beerViewModel.loadMoreBeer()
         }
+
+
         dataBinding.refreshLayout.setOnRefreshListener {
             beerViewModel.startGetListBeer(
                 shouldShowLoading = false

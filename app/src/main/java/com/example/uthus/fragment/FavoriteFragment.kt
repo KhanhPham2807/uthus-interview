@@ -96,12 +96,12 @@ class FavoriteFragment : Fragment() {
                         dataBinding.progressCircular.visibility = android.view.View.VISIBLE
                     }
                     is FavoriteViewModel.DeleteBeerState.Success -> {
-                        CoroutineScope(Dispatchers.Main).launch {
+
                             dataBinding.progressCircular.visibility = android.view.View.GONE
                             listSection.remove(deleteBeerState.position)
                             adapter.notifyDataSetChanged()
 
-                        }
+
 
 
 
@@ -136,15 +136,8 @@ class FavoriteFragment : Fragment() {
                         dataBinding.progressCircular.visibility = android.view.View.VISIBLE
                     }
                     is FavoriteViewModel.UpdateBeerState.Success -> {
-                        CoroutineScope(Dispatchers.Main).launch {
                             dataBinding.progressCircular.visibility = android.view.View.GONE
-
                             adapter.notifyItemChanged(updateBeerFlow.position)
-
-                        }
-
-
-
                         //  adapter.notifyItemRangeRemoved(0, 1)
                     }
                     is FavoriteViewModel.UpdateBeerState.Error -> {
