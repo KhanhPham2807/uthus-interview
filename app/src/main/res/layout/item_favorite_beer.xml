@@ -21,6 +21,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"/>
         <TextView
+            android:ellipsize="end"
+            android:maxLines="2"
             android:paddingEnd="@dimen/long_16dp"
             app:layout_constraintEnd_toStartOf="@id/btnDelete"
             android:text="@{item.name}"
@@ -60,6 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
+
             android:text="@{item.note}"
             android:id="@+id/editNote"
             app:layout_constraintEnd_toEndOf="parent"

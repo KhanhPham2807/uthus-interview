@@ -34,6 +34,7 @@ class BeerFragment : Fragment() {
     val adapter by lazy {
         MultiViewAdapter()
     }
+   private var listSection: ListSection<BeerResponse> =  ListSection<BeerResponse>()
     private val beerViewModel: BeerViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +54,12 @@ class BeerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        fetchData()
         collectDataFromViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchData()
     }
 
     private fun collectDataFromViewModel() {
@@ -69,7 +74,7 @@ class BeerFragment : Fragment() {
                     is BeerViewModel.FetchBeerState.Success -> {
                         dataBinding.refreshLayout.isRefreshing = false
                         dataBinding.progressCircular.visibility = View.GONE
-                        addListBeerToView(getBeerState.listBeerResponse)
+                        addListBeerToView(getBeerState.listBeerResponse,getBeerState.isLoadMore)
                     }
                     is BeerViewModel.FetchBeerState.Error -> {
                         dataBinding.refreshLayout.isRefreshing = false
@@ -102,16 +107,33 @@ class BeerFragment : Fragment() {
                 }
 
             }
+            collectFlowWhenStarted(uiEvent){event ->
+                when(event){
+                    is BeerViewModel.UIEvent.ClearSection ->{
+                        adapter.removeAllSections()
+                        listSection= ListSection<BeerResponse>()
+
+                    }
+                }
+            }
         }
     }
 
-    private fun addListBeerToView(listBeerResponse: List<BeerResponse>) {
-        val listSection: ListSection<BeerResponse> = ListSection<BeerResponse>()
-        listSection.addAll(listBeerResponse)
-        adapter.addSection(listSection)
+    private fun addListBeerToView(listBeerResponse: List<BeerResponse>, isLoadMore : Boolean) {
+        if(!isLoadMore){
+            listSection= ListSection<BeerResponse>()
+            listSection.addAll(listBeerResponse)
+            adapter.addSection(listSection)
+        }
+        else{
+            listSection.addAll(listBeerResponse)
+            adapter.notifyDataSetChanged()
+        }
+
     }
 
     private fun fetchData() {
+
         beerViewModel.startGetListBeer(true)
     }
 

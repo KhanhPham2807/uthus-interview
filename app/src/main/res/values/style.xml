@@ -5,5 +5,8 @@
         <item name="android:includeFontPadding">false</item>
 
     </style>
+    <style name="CustomEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edt_back_ground</item>
+    </style>
 
 </resources>

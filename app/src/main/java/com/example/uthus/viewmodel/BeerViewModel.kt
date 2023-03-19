@@ -14,10 +14,10 @@ import com.example.uthus.model.BeerResponse.Companion.SaveStatus.SAVING
 import com.example.uthus.network.NetworkResult
 import com.example.uthus.repository.BeerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,7 +40,14 @@ class BeerViewModel @Inject constructor(
     private var _saveBeerFlow = MutableStateFlow<SaveBeerState?>(null)
     val saveBeerFlow: StateFlow<SaveBeerState?> = _saveBeerFlow
 
-    private fun getListBeers(shouldShowLoading: Boolean) {
+    private var _uiEvent = Channel<UIEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+
+
+
+
+    private fun getListBeers(shouldShowLoading: Boolean, isLoadMore: Boolean) {
         viewModelScope.launch {
 
             beerRepository.getListBeerCheckExist(dataListWrapper.currentPage, shouldShowLoading)
@@ -57,7 +64,7 @@ class BeerViewModel @Inject constructor(
                                     dataListWrapper.allowLoadMore = it.allowLoadMore
                                 }
                             }
-                            _beerResponseFlow.emit(FetchBeerState.Success(dataListWrapper.dataList))
+                            _beerResponseFlow.emit(FetchBeerState.Success(dataListWrapper.dataList, isLoadMore))
                         }
                         is NetworkResult.Error -> {
                             _beerResponseFlow.emit(FetchBeerState.Error(networkResult?.baseErrorApiResponse?.message))
@@ -73,14 +80,18 @@ class BeerViewModel @Inject constructor(
     }
 
     fun startGetListBeer(shouldShowLoading: Boolean) {
-        dataListWrapper.reset()
-        getListBeers(shouldShowLoading)
+        viewModelScope.launch {
+            _uiEvent.send(UIEvent.ClearSection)
+            dataListWrapper.reset()
+            getListBeers(shouldShowLoading, false)
+        }
+
     }
 
     fun loadMoreBeer() {
-        dataListWrapper.currentPage++
         if (dataListWrapper.allowLoadMore) {
-            getListBeers(false)
+            dataListWrapper.currentPage++
+            getListBeers(false, true)
         }
     }
 
@@ -111,7 +122,7 @@ class BeerViewModel @Inject constructor(
 
     sealed class FetchBeerState {
         object Loading : FetchBeerState()
-        class Success(val listBeerResponse: List<BeerResponse>) : FetchBeerState()
+        class Success(val listBeerResponse: List<BeerResponse>,val isLoadMore: Boolean) : FetchBeerState()
 
         class Error(val errorMessage: String?) : FetchBeerState()
     }
@@ -120,6 +131,10 @@ class BeerViewModel @Inject constructor(
         class Loading(val beerPosition: Int) : SaveBeerState()
         class Success(val beerPosition: Int) : SaveBeerState()
         class Error(val errorMessage: String?) : SaveBeerState()
+    }
+    sealed class UIEvent {
+        object ClearSection :UIEvent()
+
     }
 
 }
